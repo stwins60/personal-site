@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     sh "pip install -r requirements.txt --no-cache-dir"
-                    sh "pytest --cov=app --cov-report=xml --cov-report=html"
+                    sh "python3 -m pytest --cov=app --cov-report=xml --cov-report=html"
                 }
             }
         }
