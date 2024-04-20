@@ -1,0 +1,9 @@
+public
+tmp
+auth.py
+.env
+passenger_wsgi.py
+__pycache__
+zappa_settings.json
+stderr.log
+venv
