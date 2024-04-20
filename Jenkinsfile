@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'node21'
-    }
-
     environment {
         DOCKERHUB_CREDENTIALS = credentials('d4506f04-b98c-47db-95ce-018ceac27ba6')
         SCANNER_HOME= tool 'sonar-scanner'
@@ -44,10 +40,11 @@ pipeline {
                 }
             }
         }
-        stage('NPM Install') {
+        stage('Pytest') {
             steps {
                 script {
-                    sh "npm install"
+                    sh "pip install -r requirements.txt --no-cache-dir"
+                    sh "pytest --cov=app --cov-report=xml --cov-report=html"
                 }
             }
         }
