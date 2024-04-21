@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.secret_key = ''.join(random.choice('0123456789ABCDEF') for i in range(24))
 recaptcha = ReCaptcha(app=app)
 
+
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['FLASK_ENV'] = 'development'
 app.config['DEBUG'] = True
