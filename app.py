@@ -1,6 +1,6 @@
 import logging
 from flask import Flask, render_template, request, url_for, redirect, session, make_response
-from flask_recaptcha import ReCaptcha
+# from flask_recaptcha import ReCaptcha
 import sqlite3 as sql
 from sqlite3 import Error
 import mailer
@@ -16,15 +16,15 @@ logging.basicConfig(filename='flask_errors.log', level=logging.ERROR)
 app = Flask(__name__)
 #create random secret key with 24 characters
 app.secret_key = ''.join(random.choice('0123456789ABCDEF') for i in range(24))
-recaptcha = ReCaptcha(app=app)
+# recaptcha = ReCaptcha(app=app)
 
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['FLASK_ENV'] = 'development'
 app.config['DEBUG'] = True
 app.config['FLASK_APP'] = 'app.py'
-app.config['RECAPTCHA_SITE_KEY'] = os.getenv('RECAPTCHA_SITE_KEY')
-app.config['RECAPTCHA_SECRET_KEY'] = os.getenv('RECAPTCHA_SECRET_KEY')
+# app.config['RECAPTCHA_SITE_KEY'] = os.getenv('RECAPTCHA_SITE_KEY')
+# app.config['RECAPTCHA_SECRET_KEY'] = os.getenv('RECAPTCHA_SECRET_KEY')
 
 headers = {
     'Content-Type': 'text/html; charset=utf-8',
@@ -56,10 +56,10 @@ def contact():
         email = request.form['email']
         message = request.form['content']
 
-        if recaptcha.verify():
-            msg = 'Recaptcha verified'
-        else:
-            msg = 'Recaptcha failed'
+        # if recaptcha.verify():
+        #     msg = 'Recaptcha verified'
+        # else:
+        #     msg = 'Recaptcha failed'
 
         if message == '':
             resp = make_response(render_template('index.html', error='Please fill in all fields', msg=msg))
