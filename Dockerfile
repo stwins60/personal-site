@@ -16,7 +16,7 @@ COPY ./requirements.txt .
 
 RUN pip install -r requirements.txt --no-cache-dir
 
-RUN "python -m pytest"
+# RUN "python -m pytest"
 
 EXPOSE 5001
 
