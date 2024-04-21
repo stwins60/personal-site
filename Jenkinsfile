@@ -98,7 +98,7 @@ pipeline {
                         sh "docker rm -f ${containerName}"
                     }
                     else {
-                        sh "docker run -d --name ${containerName} -p 5000:5001 $IMAGE_NAME:$IMAGE_TAG"
+                        sh "docker run -d --name ${containerName} -p 5489:5001 $IMAGE_NAME:$IMAGE_TAG"
                         
                     }
                 }
