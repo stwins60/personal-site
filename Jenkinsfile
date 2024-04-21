@@ -96,10 +96,10 @@ pipeline {
                     def isRunning = sh(script: "docker ps -a | grep ${containerName}", returnStatus: true)
                     if(isRunning == 0) {
                         sh "docker rm -f ${containerName}"
-                        sh "docker run -d --name ${containerName} -p 5489:5001 $IMAGE_NAME:$IMAGE_TAG"
+                        sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
                     }
                     else {
-                        sh "docker run -d --name ${containerName} -p 5489:5001 $IMAGE_NAME:$IMAGE_TAG"
+                        sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
                         
                     }
                 }
