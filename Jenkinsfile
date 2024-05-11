@@ -9,6 +9,7 @@ pipeline {
         RECAPTCHA_SITE_KEY = "${env.RECAPTCHA_SITE_KEY}"
         RECAPTCHA_SECRET_KEY = "${env.RECAPTCHA_SECRET_KEY}"
         SENDGRID_API_KEY = "${env.SENDGRID_API_KEY}"
+        SNYK_API_TOKEN = credentials('SNYK-TOKEN')
     }
 
     stages {
@@ -68,18 +69,12 @@ pipeline {
                 }
             }
         }
-        // stage('Test') {
-        //     steps {
-        //         echo 'Testing...'
-        //         snykSecurity(
-        //           snykInstallation: 'synk@latest',
-        //           snykTokenId: 'ab1d17a9-dd1b-474e-9584-617203f0530b',
-        //           targetFile: 'requirements.txt',
-        //           organisation: 'idrisniyi94',
-        //           severity: 'high'
-        //         )
-        //     }
-        // }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                sh "snyk auth $SNYK_API_TOKEN"
+                sh "snyk monitor --all-projects --org=37a4a89a-0342-47ab-9298-9f05eaae71f9"
+        }
         stage("Login to DockerHub") {
             steps {
                 sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
