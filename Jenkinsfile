@@ -75,7 +75,7 @@ pipeline {
                   snykInstallation: 'synk@latest',
                   snykTokenId: 'ab1d17a9-dd1b-474e-9584-617203f0530b',
                   targetFile: 'requirements.txt',
-                  organization: 'idrisniyi94'
+                  organization: 'idrisniyi94',
                   severity: 'high'
                 )
             }
