@@ -73,7 +73,7 @@ pipeline {
             steps {
                 echo 'Testing...'
                 sh "snyk auth $SNYK_API_TOKEN"
-                sh "snyk monitor --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --file=req*.txt --package-manager=pip"
+                sh "snyk monitor --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --file=requirements.txt --package-manager=pip"
                 sh "snyk monitor --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --file=Dockerfile"
             }
         }
