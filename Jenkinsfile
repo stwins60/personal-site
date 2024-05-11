@@ -22,6 +22,13 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/stwins60/personal-site.git'
             }
         }
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh "pip install -r requirements.txt --no-cache-dir"
+                }
+            }
+        }
         stage('Sonarqube Analysis') {
             steps {
                 script {
