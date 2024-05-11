@@ -73,8 +73,8 @@ pipeline {
             steps {
                 echo 'Testing...'
                 sh "snyk auth $SNYK_API_TOKEN"
-                sh "snyk monitor --all-projects --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --target-file=requirements.txt"
-                sh "snyk test --all-projects --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --target-file=Dockerfile"
+                sh "snyk monitor --all-projects --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --file=req*.txt --package-manager=pip"
+                sh "snyk test --all-projects --org=37a4a89a-0342-47ab-9298-9f05eaae71f9 --file=Dockerfile"
             }
         }
         stage("Login to DockerHub") {
