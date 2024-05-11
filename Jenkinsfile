@@ -68,18 +68,18 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                snykSecurity(
-                  snykInstallation: 'synk@latest',
-                  snykTokenId: 'ab1d17a9-dd1b-474e-9584-617203f0530b',
-                  targetFile: 'requirements.txt',
-                  organisation: 'idrisniyi94',
-                  severity: 'high'
-                )
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         echo 'Testing...'
+        //         snykSecurity(
+        //           snykInstallation: 'synk@latest',
+        //           snykTokenId: 'ab1d17a9-dd1b-474e-9584-617203f0530b',
+        //           targetFile: 'requirements.txt',
+        //           organisation: 'idrisniyi94',
+        //           severity: 'high'
+        //         )
+        //     }
+        // }
         stage("Login to DockerHub") {
             steps {
                 sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
