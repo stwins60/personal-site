@@ -112,10 +112,17 @@ pipeline {
                     def isRunning = sh(script: "docker ps -a | grep ${containerName}", returnStatus: true)
                     if(isRunning == 0) {
                         sh "docker rm -f ${containerName}"
-                        sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
+                        dir("terraform") {
+                            sh "terraform init"
+                            sh "terraform apply -auto-approve -var 'image_name=$IMAGE_NAME' -var 'image_tag=$IMAGE_TAG' -var 'container_name=$containerName' -var 'external_port=5489'"
+                        }
                     }
                     else {
-                        sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
+                        // sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
+                        dir("terraform") {
+                            sh "terraform init"
+                            sh "terraform apply -auto-approve -var 'image_name=$IMAGE_NAME' -var 'image_tag=$IMAGE_TAG' -var 'container_name=$containerName' -var 'external_port=5489'"
+                        }
                         
                     }
                 }
