@@ -1,6 +1,6 @@
 
 resource "docker_container" "this" {
-  name  = "personal-site"
+  name  = var.container_name
   image = "${var.image_name}:${var.image_tag}"
   ports {
     internal = 5001

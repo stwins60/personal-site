@@ -12,3 +12,8 @@ variable "external_port" {
   type        = number
   description = "Port to expose the container"
 }
+
+variable "container_name" {
+  type        = string
+  description = "Name of the container"
+}
