@@ -4,8 +4,9 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('1686a704-e66e-40f8-ac04-771a33b6256d')
         SCANNER_HOME= tool 'sonar-scanner'
-        IMAGE_NAME = 'idrisniyi94/personal-site'
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = "v.0.${env.BUILD_NUMBER}"
+        IMAGE_NAME = 'idrisniyi94/personal-site:${IMAGE_TAG}'
+        BRANCH_NAME = "${GIT_BRANCH.split('/')[1]}"
         // RECAPTCHA_SITE_KEY = "${env.RECAPTCHA_SITE_KEY}"
         // RECAPTCHA_SECRET_KEY = "${env.RECAPTCHA_SECRET_KEY}"
         // SENDGRID_API_KEY = "${env.SENDGRID_API_KEY}"
@@ -89,7 +90,7 @@ pipeline {
         stage("Docker Build") {
             steps {
                 script {
-                    sh "docker build -t $IMAGE_NAME:$IMAGE_TAG ."
+                    sh "docker build -t $IMAGE_NAME ."
                     echo "Image built successful"
                 }
             }
@@ -97,14 +98,14 @@ pipeline {
         stage("Trivy Image Scan") {
             steps {
                 script {
-                    sh "trivy image $IMAGE_NAME:$IMAGE_TAG"
+                    sh "trivy image $IMAGE_NAME"
                 }
             }
         }
         stage("Docker Push") {
             steps {
                 script {
-                    sh "docker push $IMAGE_NAME:$IMAGE_TAG"
+                    sh "docker push $IMAGE_NAME"
                 }
             }
         }
@@ -117,9 +118,10 @@ pipeline {
                             sh "kubectl apply -f deployment.yaml"
                             sh "kubectl apply -f service.yaml"
 
-                            def rolloutStatus = sh(script: "kubectl rollout status deployment personal-site", returnStatus: true)
+                            def rolloutStatus = sh(script: "kubectl rollout status deployment personal-site -n personal-site", returnStatus: true)
                             def deploymentCondition = sh(script: "kubectl get deploy personal-site -n personal-site -o jsonpath='{.status.conditions[?(@.type==\"Available\")].status}'", returnStdout: true).trim()
-                            def lastErrorLogs = sh(script: "kubectl logs ${podName} -n ${NAMESPACE} --tail=50", returnStdout: true).trim()
+                            def podName = sh(script: "kubectl get pods -n personal-site -l app=personal-site -o jsonpath='{.items[-1:].metadata.name}'", returnStdout: true).trim()
+                            def lastErrorLogs = sh(script: "kubectl logs ${podName} -n personal-site --tail=50", returnStdout: true).trim()
 
 
                             if (rolloutStatus != 0) {
