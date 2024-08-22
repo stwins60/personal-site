@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: personal-site-svc
+  namespace: personal-site
+spec:
+  selector:
+    app: personal-site
+  ports:
+  - port: 5001
+    targetPort: 5001

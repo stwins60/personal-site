@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('d4506f04-b98c-47db-95ce-018ceac27ba6')
+        DOCKERHUB_CREDENTIALS = credentials('1686a704-e66e-40f8-ac04-771a33b6256d')
         SCANNER_HOME= tool 'sonar-scanner'
         IMAGE_NAME = 'idrisniyi94/personal-site'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        RECAPTCHA_SITE_KEY = "${env.RECAPTCHA_SITE_KEY}"
-        RECAPTCHA_SECRET_KEY = "${env.RECAPTCHA_SECRET_KEY}"
-        SENDGRID_API_KEY = "${env.SENDGRID_API_KEY}"
-        SNYK_API_TOKEN = credentials('SNYK-TOKEN')
+        // RECAPTCHA_SITE_KEY = "${env.RECAPTCHA_SITE_KEY}"
+        // RECAPTCHA_SECRET_KEY = "${env.RECAPTCHA_SECRET_KEY}"
+        // SENDGRID_API_KEY = "${env.SENDGRID_API_KEY}"
+        // SNYK_API_TOKEN = credentials('SNYK-TOKEN')
     }
 
     stages {
@@ -86,7 +86,7 @@ pipeline {
         stage("Docker Build") {
             steps {
                 script {
-                    sh "docker build -t $IMAGE_NAME:$IMAGE_TAG --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY --build-arg RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY --build-arg SENDGRID_API_KEY=$SENDGRID_API_KEY ."
+                    sh "docker build -t $IMAGE_NAME:$IMAGE_TAG ."
                     echo "Image built successful"
                 }
             }
@@ -105,29 +105,58 @@ pipeline {
                 }
             }
         }
-        stage("Deploy") {
+        stage('Deploy to K8S') {
             steps {
                 script {
-                    def containerName = 'personal-site'
-                    def isRunning = sh(script: "docker ps -a | grep ${containerName}", returnStatus: true)
-                    if(isRunning == 0) {
-                        sh "docker rm -f ${containerName}"
-                        dir("terraform") {
-                            sh "terraform init"
-                            sh "terraform apply -auto-approve -var 'image_name=$IMAGE_NAME' -var 'image_tag=$IMAGE_TAG' -var 'container_name=$containerName' -var 'external_port=5489'"
+                    dir('./k8s') {
+                        withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: '', contextName: '', credentialsId: 'fff8a37d-0976-4787-a985-a82f34d8db40', namespace: '', serverUrl: '']]) {
+                            sh "sed -i 's|IMAGE_NAME|${IMAGE_NAME}|g' deployment.yaml"
+                            sh "kubectl apply -f deployment.yaml"
+                            sh "kubectl apply -f service.yaml"
+
+                            def rolloutStatus = sh(script: "kubectl rollout status deployment personal-site", returnStatus: true)
+                            def deploymentCondition = sh(script: "kubectl get deploy personal-site -n personal-site -o jsonpath='{.status.conditions[?(@.type==\"Available\")].status}'", returnStdout: true).trim()
+                            def lastErrorLogs = sh(script: "kubectl logs ${podName} -n ${NAMESPACE} --tail=50", returnStdout: true).trim()
+
+
+                            if (rolloutStatus != 0) {
+                                // Send the Slack message with rollout status and last error logs
+                                slackSend channel: '#alerts', color: 'danger', message: """Deployment to Kubernetes failed. Check the logs for more information. 
+                                More Info: ${env.BUILD_URL} 
+                                Rollout Status: ${deploymentRolloutStatus} 
+                                Last Error Logs: ${lastErrorLogs}"""
+                            }
+                            else {
+                                slackSend channel: '#alerts', color: 'good', message: "Deployment to Kubernetes successful. More Info: ${env.BUILD_URL}"
+                            }
                         }
-                    }
-                    else {
-                        // sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
-                        dir("terraform") {
-                            sh "terraform init"
-                            sh "terraform apply -auto-approve -var 'image_name=$IMAGE_NAME' -var 'image_tag=$IMAGE_TAG' -var 'container_name=$containerName' -var 'external_port=5489'"
-                        }
-                        
                     }
                 }
             }
         }
+        // stage("Deploy") {
+        //     steps {
+        //         script {
+        //             def containerName = 'personal-site'
+        //             def isRunning = sh(script: "docker ps -a | grep ${containerName}", returnStatus: true)
+        //             if(isRunning == 0) {
+        //                 sh "docker rm -f ${containerName}"
+        //                 dir("terraform") {
+        //                     sh "terraform init"
+        //                     sh "terraform apply -auto-approve -var 'image_name=$IMAGE_NAME' -var 'image_tag=$IMAGE_TAG' -var 'container_name=$containerName' -var 'external_port=5489'"
+        //                 }
+        //             }
+        //             else {
+        //                 // sh "docker run -d --name ${containerName} -p 5489:5001 --restart unless-stopped $IMAGE_NAME:$IMAGE_TAG"
+        //                 dir("terraform") {
+        //                     sh "terraform init"
+        //                     sh "terraform apply -auto-approve -var 'image_name=$IMAGE_NAME' -var 'image_tag=$IMAGE_TAG' -var 'container_name=$containerName' -var 'external_port=5489'"
+        //                 }
+                        
+        //             }
+        //         }
+        //     }
+        // }
     }
     post {
         success {

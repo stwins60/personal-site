@@ -7,3 +7,4 @@ __pycache__
 zappa_settings.json
 stderr.log
 venv
+terraform

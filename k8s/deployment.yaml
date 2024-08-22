@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: personal-site
+  namespace: personal-site
+spec:
+  selector:
+    matchLabels:
+      app: personal-site
+  template:
+    metadata:
+      labels:
+        app: personal-site
+    spec:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: custom-label
+              operator: In
+              values:
+              - k8s
+      containers:
+      - name: personal-site
+        image: IMAGE_NAME
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5001
+        env:
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: personal-site-secret
+              key: SENDGRID_API_KEY
+        - name: RECAPTCHA_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: personal-site-secret
+              key: RECAPTCHA_SECRET_KEY
+        - name: RECAPTCHA_SITE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: personal-site-secret
+              key: RECAPTCHA_SITE_KEY
