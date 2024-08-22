@@ -23,10 +23,13 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/stwins60/personal-site.git'
             }
         }
-        stage('Install Dependencies') {
+        stage('Pytest') {
             steps {
                 script {
-                    sh "pip install -r requirements.txt --no-cache-dir"
+                    sh "python3 -m pip install -r requirements.txt --no-cache-dir --break-system-packages"
+                    sh "pytest --cov=app --cov-report=xml:test-reports/coverage.xml --junitxml=test-reports/pytest.xml"
+                    sh "ls -la test-reports"
+                    junit testResults: 'test-reports/*.xml'
                 }
             }
         }
