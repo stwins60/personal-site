@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('1686a704-e66e-40f8-ac04-771a33b6256d')
         SCANNER_HOME= tool 'sonar-scanner'
         IMAGE_TAG = "v.0.${env.BUILD_NUMBER}"
-        IMAGE_NAME = 'idrisniyi94/personal-site:${IMAGE_TAG}'
+        IMAGE_NAME = "idrisniyi94/personal-site:${IMAGE_TAG}"
         BRANCH_NAME = "${GIT_BRANCH.split('/')[1]}"
         // RECAPTCHA_SITE_KEY = "${env.RECAPTCHA_SITE_KEY}"
         // RECAPTCHA_SECRET_KEY = "${env.RECAPTCHA_SECRET_KEY}"
