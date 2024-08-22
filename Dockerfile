@@ -31,10 +31,10 @@ WORKDIR /app
 
 # Copy only necessary files from build stage
 COPY --from=build /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
-COPY --from=build /app /app
+COPY . . 
 
 # Expose the application port
 EXPOSE 5001
 
 # Command to run the application
-CMD ["python", "server.py"]
+CMD ["python", "run.py"]
