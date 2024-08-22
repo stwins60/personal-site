@@ -12,14 +12,15 @@ spec:
       labels:
         app: personal-site
     spec:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: custom-label
-              operator: In
-              values:
-              - k8s
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: custom-label
+                    operator: In
+                    values:
+                      - k8s
       containers:
       - name: personal-site
         image: IMAGE_NAME
