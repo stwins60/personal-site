@@ -17,7 +17,7 @@ COPY ./requirements.txt .
 RUN pip install -r requirements.txt --no-cache-dir
 
 # Stage 2: Production stage
-FROM python:3.13.0b2-slim
+FROM python:3.14.0a1-slim
 
 ARG RECAPTCHA_SECRET_KEY
 ARG RECAPTCHA_SITE_KEY
