@@ -10,7 +10,7 @@ load_dotenv()
 # sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
 sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
 def ValidateEmail(email):
-    regrex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$'
+    regrex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$'
     email_domain = ['gmail', 'yahoo', 'hotmail', 'outlook']
     user_email_domain = email.split('@')[1]
     user_email_domain = user_email_domain.split('.')[0]

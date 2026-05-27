@@ -9,6 +9,8 @@ ENV RECAPTCHA_SECRET_KEY=$RECAPTCHA_SECRET_KEY
 ENV RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY
 ENV SENDGRID_API_KEY=$SENDGRID_API_KEY
 
+RUN apt-get update && apt-get install -y --no-install-recommends gcc curl netstat
+
 WORKDIR /app
 
 COPY ./requirements.txt .
